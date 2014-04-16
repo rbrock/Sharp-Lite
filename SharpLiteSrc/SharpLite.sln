@@ -1,6 +1,8 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30110.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpLite.Domain", "app\SharpLite.Domain\SharpLite.Domain.csproj", "{6ABEA9CB-7E93-4EF2-89F0-34ED342CD1EB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpLite.NHibernateProvider", "app\SharpLite.NHibernateProvider\SharpLite.NHibernateProvider.csproj", "{5C4888C4-CAB1-45E5-9581-761778131C97}"
@@ -10,6 +12,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpLite.EntityFrameworkProvider", "app\SharpLite.EntityFrameworkProvider\SharpLite.EntityFrameworkProvider.csproj", "{7901626D-5D18-4DDD-9028-CB37384D1EF0}"
 EndProject
 Global
+	GlobalSection(CodealikeProperties) = postSolution
+		SolutionGuid = 9e65e986-86b2-4fbc-bfeb-e35e67389880
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
