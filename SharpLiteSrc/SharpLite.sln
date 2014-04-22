@@ -11,10 +11,26 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpLite.Web", "app\SharpL
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpLite.EntityFrameworkProvider", "app\SharpLite.EntityFrameworkProvider\SharpLite.EntityFrameworkProvider.csproj", "{7901626D-5D18-4DDD-9028-CB37384D1EF0}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{E450F987-D636-40C1-9AF7-8E6AE047D84E}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B9E27FF6-4556-4FFF-AF4C-7826E7EBCE25}"
+	ProjectSection(SolutionItems) = preProject
+		nuspec.xsd = nuspec.xsd
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpLite.Domain.NuGet", "app\SharpLite.Domain.NuGet\SharpLite.Domain.NuGet.csproj", "{0451BAEF-DF2E-4B98-8644-94EE9415E389}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpLite.NHibernateProvider.NuGet", "app\SharpLite.NHibernateProvider.NuGet\SharpLite.NHibernateProvider.NuGet.csproj", "{289F6897-F2C9-43C7-9029-19CFF8E50933}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpLite.Web.NuGet", "app\SharpLite.Web.NuGet\SharpLite.Web.NuGet.csproj", "{45F44438-F447-435C-B3E8-15C8B45CCD0D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpLite.EntityFrameworkProvider.NuGet", "app\SharpLite.EntityFrameworkProvider.NuGet\SharpLite.EntityFrameworkProvider.NuGet.csproj", "{F5CBB5EA-30CA-449F-AA6C-B864FAEA4F40}"
+EndProject
 Global
-	GlobalSection(CodealikeProperties) = postSolution
-		SolutionGuid = 9e65e986-86b2-4fbc-bfeb-e35e67389880
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -36,8 +52,27 @@ Global
 		{7901626D-5D18-4DDD-9028-CB37384D1EF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7901626D-5D18-4DDD-9028-CB37384D1EF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7901626D-5D18-4DDD-9028-CB37384D1EF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0451BAEF-DF2E-4B98-8644-94EE9415E389}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0451BAEF-DF2E-4B98-8644-94EE9415E389}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0451BAEF-DF2E-4B98-8644-94EE9415E389}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0451BAEF-DF2E-4B98-8644-94EE9415E389}.Release|Any CPU.Build.0 = Release|Any CPU
+		{289F6897-F2C9-43C7-9029-19CFF8E50933}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{289F6897-F2C9-43C7-9029-19CFF8E50933}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{289F6897-F2C9-43C7-9029-19CFF8E50933}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{289F6897-F2C9-43C7-9029-19CFF8E50933}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45F44438-F447-435C-B3E8-15C8B45CCD0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45F44438-F447-435C-B3E8-15C8B45CCD0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45F44438-F447-435C-B3E8-15C8B45CCD0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45F44438-F447-435C-B3E8-15C8B45CCD0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5CBB5EA-30CA-449F-AA6C-B864FAEA4F40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5CBB5EA-30CA-449F-AA6C-B864FAEA4F40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5CBB5EA-30CA-449F-AA6C-B864FAEA4F40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5CBB5EA-30CA-449F-AA6C-B864FAEA4F40}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(CodealikeProperties) = postSolution
+		SolutionGuid = 9e65e986-86b2-4fbc-bfeb-e35e67389880
 	EndGlobalSection
 EndGlobal
