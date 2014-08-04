@@ -55,7 +55,7 @@ namespace SharpLite.NHibernateProvider.ConfigurationCaching
         /// <returns>If an up to date cached object is available, a <see cref="Configuration"/> 
         /// object, otherwise null.</returns>
         public Configuration LoadConfiguration(string configKey, string configPath, string[] mappingAssemblies) {
-            string cachePath = CachedConfigPath(configKey);
+            var cachePath = CachedConfigPath(configKey);
             AppendToDependentFilePaths(mappingAssemblies);
 
             if (configPath != null) {
@@ -75,7 +75,7 @@ namespace SharpLite.NHibernateProvider.ConfigurationCaching
         /// <param name="configKey">Key value to provide a unique name to the cached <see cref="Configuration"/>.</param>
         /// <param name="config">Configuration object to save.</param>
         public void SaveConfiguration(string configKey, Configuration config) {
-            string cachePath = CachedConfigPath(configKey);
+            var cachePath = CachedConfigPath(configKey);
             FileCache.StoreInCache(config, cachePath);
             File.SetLastWriteTime(cachePath, GetMaxDependencyTime());
         }

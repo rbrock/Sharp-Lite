@@ -22,8 +22,8 @@ namespace SharpLite.NHibernateProvider
         public bool DoesDuplicateExistWithTypedIdOf<TId>(IEntityWithTypedId<TId> entity) {
             if (entity == null) throw new ArgumentNullException("Entity may not be null when checking for duplicates");
 
-            ISession session = _sessionFactory.GetCurrentSession();
-            FlushMode previousFlushMode = session.FlushMode;
+            var session = _sessionFactory.GetCurrentSession();
+            var previousFlushMode = session.FlushMode;
 
             // We do NOT want this to flush pending changes as checking for a duplicate should 
             // only compare the object against data that's already in the database
@@ -34,7 +34,7 @@ namespace SharpLite.NHibernateProvider
                     SetMaxResults(1);
 
             AppendSignaturePropertyCriteriaTo(criteria, entity);
-            bool doesDuplicateExist = criteria.List().Count > 0;
+            var doesDuplicateExist = criteria.List().Count > 0;
             session.FlushMode = previousFlushMode;
             return doesDuplicateExist;
         }
