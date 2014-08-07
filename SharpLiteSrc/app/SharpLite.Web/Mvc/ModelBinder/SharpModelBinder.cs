@@ -1,118 +1,94 @@
-﻿using System;
+﻿using SharpLite.Domain;
+using SharpLite.Web.Annotations;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Web.Mvc;
-using SharpLite.Domain;
 
 namespace SharpLite.Web.Mvc.ModelBinder
 {
     public class SharpModelBinder : DefaultModelBinder
     {
-        protected override object GetPropertyValue(
-            ControllerContext controllerContext,
-            ModelBindingContext bindingContext,
-            PropertyDescriptor propertyDescriptor,
-            IModelBinder propertyBinder) {
-            var propertyType = propertyDescriptor.PropertyType;
+        private const string lcIdPropertyName = "Id";
 
-            if (IsEntityType(propertyType)) {
+        //public static object IEntityWithTypedId { get; set; } //UNUSED PROP
+
+        [NotNull]
+        protected override object GetPropertyValue([NotNull] ControllerContext aControllerContext, [NotNull] ModelBindingContext aBindingContext, [NotNull] PropertyDescriptor aPropertyDescriptor, [NotNull] IModelBinder aPropertyBinder)
+        {
+            var lPropertyType = aPropertyDescriptor.PropertyType;
+
+            if (IsEntityType(lPropertyType))
+            {
                 // use the EntityValueBinder
-                return base.GetPropertyValue(
-                    controllerContext, bindingContext, propertyDescriptor, new EntityValueBinder());
+                return base.GetPropertyValue(aControllerContext, aBindingContext, aPropertyDescriptor, new EntityValueBinder());
             }
 
-            if (IsSimpleGenericBindableEntityCollection(propertyType)) {
+            if (IsSimpleGenericBindableEntityCollection(lPropertyType))
+            {
                 // use the EntityValueCollectionBinder
-                return base.GetPropertyValue(
-                    controllerContext, bindingContext, propertyDescriptor, new EntityCollectionValueBinder());
+                return base.GetPropertyValue(aControllerContext, aBindingContext, aPropertyDescriptor, new EntityCollectionValueBinder());
             }
 
-            return base.GetPropertyValue(controllerContext, bindingContext, propertyDescriptor, propertyBinder);
+            return base.GetPropertyValue(aControllerContext, aBindingContext, aPropertyDescriptor, aPropertyBinder);
+        }
+
+        private static bool IsEntityType([NotNull] Type aPropertyType)
+        {
+            var lIsEntityType = aPropertyType.GetInterfaces().Any(aType => aType.IsGenericType && aType.GetGenericTypeDefinition() == typeof(IEntityWithTypedId<>));
+
+            return lIsEntityType;
+        }
+
+        private static bool IsSimpleGenericBindableEntityCollection([NotNull] Type aPropertyType)
+        {
+            var lIsSimpleGenericBindableCollection = aPropertyType.IsGenericType &&
+                                                    (aPropertyType.GetGenericTypeDefinition() == typeof(IList<>) || aPropertyType.GetGenericTypeDefinition() == typeof(ICollection<>) ||
+                                                     aPropertyType.GetGenericTypeDefinition() == typeof(ISet<>) || aPropertyType.GetGenericTypeDefinition() == typeof(IEnumerable<>));
+
+            var lIsSimpleGenericBindableEntityCollection = lIsSimpleGenericBindableCollection && IsEntityType(aPropertyType.GetGenericArguments().First());
+
+            return lIsSimpleGenericBindableEntityCollection;
         }
 
         /// <summary>
         ///     Called when the model is updating. We handle updating the Id property here because it gets filtered out
         ///     of the normal MVC2 property binding.
         /// </summary>
-        /// <param name = "controllerContext">The context within which the controller operates. The context information includes the controller, HTTP content, request context, and route data.</param>
-        /// <param name = "bindingContext">The context within which the model is bound. The context includes information such as the model object, model name, model type, property filter, and value provider.</param>
+        /// <param name = "aControllerContext">The context within which the controller operates. The context information includes the controller, HTTP content, request context, and route data.</param>
+        /// <param name = "aBindingContext">The context within which the model is bound. The context includes information such as the model object, model name, model type, property filter, and value provider.</param>
         /// <returns>
         ///     true if the model is updating; otherwise, false.
         /// </returns>
-        protected override bool OnModelUpdating(ControllerContext controllerContext, ModelBindingContext bindingContext) {
-            if (IsEntityType(bindingContext.ModelType)) {
+        protected override bool OnModelUpdating([NotNull] ControllerContext aControllerContext, [NotNull] ModelBindingContext aBindingContext)
+        {
+            if (IsEntityType(aBindingContext.ModelType))
+            {
                 // handle the Id property
-                var idProperty =
-                    (from PropertyDescriptor property in TypeDescriptor.GetProperties(bindingContext.ModelType)
-                     where property.Name == IdPropertyName
-                     select property).SingleOrDefault();
+                var lIDProperty = (from PropertyDescriptor lProperty in TypeDescriptor.GetProperties(aBindingContext.ModelType) where lProperty.Name == lcIdPropertyName select lProperty).SingleOrDefault();
 
-                this.BindProperty(controllerContext, bindingContext, idProperty);
+                BindProperty(aControllerContext, aBindingContext, lIDProperty);
             }
 
-            return base.OnModelUpdating(controllerContext, bindingContext);
+            return base.OnModelUpdating(aControllerContext, aBindingContext);
         }
 
-        protected override void SetProperty(
-            ControllerContext controllerContext,
-            ModelBindingContext bindingContext,
-            PropertyDescriptor propertyDescriptor,
-            object value) {
-            if (propertyDescriptor.Name == IdPropertyName) {
-                SetIdProperty(bindingContext, propertyDescriptor, value);
+        protected override void SetProperty([NotNull] ControllerContext aControllerContext, [NotNull] ModelBindingContext aBindingContext, [NotNull] PropertyDescriptor aPropertyDescriptor, [NotNull] object aValue)
+        {
+            if (aPropertyDescriptor.Name == lcIdPropertyName)
+            {
+                SetIdProperty(aBindingContext, aPropertyDescriptor, aValue);
             }
-            else if (value as IEnumerable != null &&
-                     IsSimpleGenericBindableEntityCollection(propertyDescriptor.PropertyType)) {
-                SetEntityCollectionProperty(bindingContext, propertyDescriptor, value);
+            else if (aValue as IEnumerable != null && IsSimpleGenericBindableEntityCollection(aPropertyDescriptor.PropertyType))
+            {
+                SetEntityCollectionProperty(aBindingContext, aPropertyDescriptor, aValue);
             }
-            else {
-                base.SetProperty(controllerContext, bindingContext, propertyDescriptor, value);
-            }
-        }
-
-        private static bool IsEntityType(Type propertyType) {
-            var isEntityType =
-                propertyType.GetInterfaces().Any(
-                    type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEntityWithTypedId<>));
-
-            return isEntityType;
-        }
-
-        private static bool IsSimpleGenericBindableEntityCollection(Type propertyType) {
-            var isSimpleGenericBindableCollection = propertyType.IsGenericType &&
-                                                    (propertyType.GetGenericTypeDefinition() == typeof(IList<>) ||
-                                                     propertyType.GetGenericTypeDefinition() == typeof(ICollection<>) ||
-                                                     propertyType.GetGenericTypeDefinition() ==
-                                                     typeof(ISet<>) ||
-                                                     propertyType.GetGenericTypeDefinition() == typeof(IEnumerable<>));
-
-            var isSimpleGenericBindableEntityCollection = isSimpleGenericBindableCollection &&
-                                                          IsEntityType(propertyType.GetGenericArguments().First());
-
-            return isSimpleGenericBindableEntityCollection;
-        }
-
-        /// <summary>
-        ///     If the property being bound is a simple, generic collection of entiy objects, then use
-        ///     reflection to get past the protected visibility of the collection property, if necessary.
-        /// </summary>
-        private static void SetEntityCollectionProperty(
-            ModelBindingContext bindingContext, PropertyDescriptor propertyDescriptor, object value) {
-            var entityCollection = propertyDescriptor.GetValue(bindingContext.Model);
-            if (entityCollection != value) {
-                var entityCollectionType = entityCollection.GetType();
-
-                foreach (var entity in value as IEnumerable) {
-                    entityCollectionType.InvokeMember(
-                        "Add",
-                        BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod,
-                        null,
-                        entityCollection,
-                        new[] { entity });
-                }
+            else
+            {
+                base.SetProperty(aControllerContext, aBindingContext, aPropertyDescriptor, aValue);
             }
         }
 
@@ -120,32 +96,48 @@ namespace SharpLite.Web.Mvc.ModelBinder
         ///     If the property being bound is an Id property, then use reflection to get past the
         ///     protected visibility of the Id property, accordingly.
         /// </summary>
-        private static void SetIdProperty(
-            ModelBindingContext bindingContext, PropertyDescriptor propertyDescriptor, object value) {
-            var idType = propertyDescriptor.PropertyType;
-            object typedId;
+        private static void SetIdProperty([NotNull] ModelBindingContext aBindingContext, [NotNull] PropertyDescriptor aPropertyDescriptor, [CanBeNull] object aValue)
+        {
+            var lIDType = aPropertyDescriptor.PropertyType;
+            object lTypedId;
 
-            if (value == null) {
-                typedId = idType.IsValueType ? Activator.CreateInstance(idType) : null;
+            if (aValue == null)
+            {
+                lTypedId = lIDType.IsValueType ? Activator.CreateInstance(lIDType) : null;
             }
-            else {
-                typedId = Convert.ChangeType(value, idType);
+            else
+            {
+                lTypedId = Convert.ChangeType(aValue, lIDType);
             }
 
             // First, look to see if there's an Id property declared on the entity itself;
             // e.g., using the new keyword
-            var idProperty = bindingContext.ModelType.GetProperty(propertyDescriptor.Name, BindingFlags.Public | 
-                BindingFlags.Instance | BindingFlags.DeclaredOnly)
-                ?? bindingContext.ModelType.GetProperty(propertyDescriptor.Name, BindingFlags.Public | BindingFlags.Instance);
+            var lIDProperty = aBindingContext.ModelType.GetProperty(aPropertyDescriptor.Name, BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly) ??
+                             aBindingContext.ModelType.GetProperty(aPropertyDescriptor.Name, BindingFlags.Public | BindingFlags.Instance);
 
             // If an Id property wasn't found on the entity, then grab the Id property from
             // the entity base class
 
             // Set the value of the protected Id property
-            idProperty.SetValue(bindingContext.Model, typedId, null);
+            lIDProperty.SetValue(aBindingContext.Model, lTypedId, null);
         }
 
-        public static object IEntityWithTypedId { get; set; }
-        private const string IdPropertyName = "Id";
+        /// <summary>
+        ///     If the property being bound is a simple, generic collection of entiy objects, then use
+        ///     reflection to get past the protected visibility of the collection property, if necessary.
+        /// </summary>
+        private static void SetEntityCollectionProperty([NotNull] ModelBindingContext aBindingContext, [NotNull] PropertyDescriptor aPropertyDescriptor, [NotNull] object aValue)
+        {
+            var lEntityCollection = aPropertyDescriptor.GetValue(aBindingContext.Model);
+            if (lEntityCollection != aValue)
+            {
+                var lEntityCollectionType = lEntityCollection.GetType();
+
+                foreach (var lEntity in (IEnumerable)aValue)
+                {
+                    lEntityCollectionType.InvokeMember("Add", BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod, null, lEntityCollection, new[] { lEntity });
+                }
+            }
+        }
     }
 }

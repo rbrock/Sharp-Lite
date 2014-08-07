@@ -50,6 +50,7 @@
     <Compile Include="Mvc\ModelBinder\EntityValueBinder.cs" />
     <Compile Include="Mvc\ModelBinder\EntityRetriever.cs" />
     <Compile Include="Mvc\ModelBinder\SharpModelBinder.cs" />
+    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

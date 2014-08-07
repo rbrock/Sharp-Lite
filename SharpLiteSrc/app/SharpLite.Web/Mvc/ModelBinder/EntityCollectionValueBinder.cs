@@ -1,7 +1,8 @@
-﻿using System;
+﻿using SharpLite.Domain;
+using SharpLite.Web.Annotations;
+using System;
 using System.Linq;
 using System.Web.Mvc;
-using SharpLite.Domain;
 
 namespace SharpLite.Web.Mvc.ModelBinder
 {
@@ -13,45 +14,51 @@ namespace SharpLite.Web.Mvc.ModelBinder
         /// <returns>
         ///     The bound value.
         /// </returns>
-        /// <param name = "controllerContext">The controller context.</param>
-        /// <param name = "bindingContext">The binding context.</param>
-        public override object BindModel(ControllerContext controllerContext, ModelBindingContext bindingContext) {
-            var collectionType = bindingContext.ModelType;
-            var collectionEntityType = collectionType.GetGenericArguments().First();
+        /// <param name = "aControllerContext">The controller context.</param>
+        /// <param name = "aModelBindingContext">The binding context.</param>
+        [CanBeNull]
+        public override object BindModel([NotNull] ControllerContext aControllerContext, [NotNull] ModelBindingContext aModelBindingContext)
+        {
+            if (aControllerContext == null) throw new ArgumentNullException("aControllerContext");
+            if (aModelBindingContext == null) throw new ArgumentNullException("aModelBindingContext");
 
-            var valueProviderResult = bindingContext.ValueProvider.GetValue(bindingContext.ModelName);
+            var lCollectionType = aModelBindingContext.ModelType;
+            var lCollectionEntityType = lCollectionType.GetGenericArguments().First();
 
-            if (valueProviderResult != null) {
-                var rawValue = valueProviderResult.RawValue as string[];
+            var lValueProviderResult = aModelBindingContext.ValueProvider.GetValue(aModelBindingContext.ModelName);
 
-                var countOfEntityIds = rawValue.Length;
-                var entities = Array.CreateInstance(collectionEntityType, countOfEntityIds);
+            if (lValueProviderResult != null)
+            {
+                var lRawValue = lValueProviderResult.RawValue as string[];
 
-                var entityInterfaceType =
-                    collectionEntityType.GetInterfaces().First(
-                        interfaceType =>
-                        interfaceType.IsGenericType &&
-                        interfaceType.GetGenericTypeDefinition() == typeof(IEntityWithTypedId<>));
+                if (lRawValue != null)
+                {
+                    var lCountOfEntityIds = lRawValue.Length;
+                    var lEntities = Array.CreateInstance(lCollectionEntityType, lCountOfEntityIds);
 
-                var idType = entityInterfaceType.GetGenericArguments().First();
+                    var lEntityInterfaceType = lCollectionEntityType.GetInterfaces().First(aInterfaceType => aInterfaceType.IsGenericType && aInterfaceType.GetGenericTypeDefinition() == typeof(IEntityWithTypedId<>));
 
-                for (var i = 0; i < countOfEntityIds; i++) {
-                    string rawId = rawValue[i];
+                    var lIDType = lEntityInterfaceType.GetGenericArguments().First();
 
-                    if (string.IsNullOrEmpty(rawId)) {
-                        return null;
+                    for (var lEntityIndex = 0; lEntityIndex < lCountOfEntityIds; lEntityIndex++)
+                    {
+                        var lRawId = lRawValue[lEntityIndex];
+
+                        if (string.IsNullOrEmpty(lRawId))
+                        {
+                            return null;
+                        }
+
+                        var lTypedId = (lIDType == typeof(Guid)) ? new Guid(lRawId) : Convert.ChangeType(lRawId, lIDType);
+                        var lEntity = EntityRetriever.GetEntityFor(lCollectionEntityType, lTypedId, lIDType);
+                        lEntities.SetValue(lEntity, lEntityIndex);
                     }
 
-                    object typedId = (idType == typeof(Guid)) ? new Guid(rawId) : Convert.ChangeType(rawId, idType);
-                    object entity = EntityRetriever.GetEntityFor(collectionEntityType, typedId, idType);
-                    entities.SetValue(entity, i);
+                    return lEntities;
                 }
-
-                // base.BindModel(controllerContext, bindingContext);
-                return entities;
             }
 
-            return base.BindModel(controllerContext, bindingContext);
+            return base.BindModel(aControllerContext, aModelBindingContext);
         }
     }
 }
