@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using SharpLite.Domain.Annotations;
 using SharpLite.Domain.DataInterfaces;
 // This is needed for the DependencyResolver...wish they would've just used Common Service Locator!
 using System.Web.Mvc;
@@ -7,32 +8,36 @@ using System.Web.Mvc;
 namespace SharpLite.Domain.Validators
 {
     /// <summary>
-    /// Due to the fact that .NET does not support generic attributes, this only works for entity 
+    /// Due to the fact that .NET does not support generic attributes, this only works for entity
     /// types having an Id of type int.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     sealed public class HasUniqueDomainSignatureAttribute : ValidationAttribute
     {
-        protected override ValidationResult IsValid(object value, ValidationContext validationContext) {
-            if (value == null)
+        /// <summary>
+        /// Determines whether the specified a value is valid.
+        /// </summary>
+        /// <param name="aValue">A value.</param>
+        /// <param name="aValidationContext">A validation context.</param>
+        /// <exception cref="System.InvalidOperationException">This validator must be used at the class level of an <see><cref>IEntityWithTypedId{int}</cref></see></exception>
+        /// <exception cref="System.TypeLoadException"><see cref="IEntityDuplicateChecker" /> has not been registered with IoC</exception>
+        [CanBeNull]
+        protected override ValidationResult IsValid([CanBeNull] object aValue, [NotNull] ValidationContext aValidationContext)
+        {
+            if (aValue == null)
                 return null;
 
-            var entityToValidate = value as IEntityWithTypedId<int>;
+            var lEntityToValidate = aValue as IEntityWithTypedId<int>;
 
-            if (entityToValidate == null)
-                throw new InvalidOperationException(
-                    "This validator must be used at the class level of an IEntityWithTypedId<int>. " +
-                    "The type you provided was " + value.GetType());
+            if (lEntityToValidate == null) throw new InvalidOperationException(string.Format("This validator must be used at the class level of an IEntityWithTypedId<int>. The type you provided was {0}", aValue.GetType()));
 
-            var duplicateChecker = DependencyResolver.Current.GetService<IEntityDuplicateChecker>();
+            var lDuplicateChecker = DependencyResolver.Current.GetService<IEntityDuplicateChecker>();
 
-            if (duplicateChecker == null)
-                throw new TypeLoadException("IEntityDuplicateChecker has not been registered with IoC");
+            if (lDuplicateChecker == null) throw new TypeLoadException("IEntityDuplicateChecker has not been registered with IoC");
 
-            if (duplicateChecker.DoesDuplicateExistWithTypedIdOf(entityToValidate))
-                return new ValidationResult(String.Empty);
-
-            return null;
+            return lDuplicateChecker.DoesDuplicateExistWithTypedIdOf(lEntityToValidate)
+                ? new ValidationResult(String.Empty)
+                : null;
         }
     }
 }

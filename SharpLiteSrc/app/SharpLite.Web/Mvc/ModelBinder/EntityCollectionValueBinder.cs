@@ -6,16 +6,18 @@ using System.Web.Mvc;
 
 namespace SharpLite.Web.Mvc.ModelBinder
 {
+    /// <summary>
+    /// Class EntityCollectionValueBinder.
+    /// </summary>
     internal class EntityCollectionValueBinder : DefaultModelBinder
     {
         /// <summary>
-        ///     Binds the model to a value by using the specified controller context and binding context.
+        /// Binds the model to a value by using the specified controller context and binding context.
         /// </summary>
-        /// <returns>
-        ///     The bound value.
-        /// </returns>
-        /// <param name = "aControllerContext">The controller context.</param>
-        /// <param name = "aModelBindingContext">The binding context.</param>
+        /// <param name="aControllerContext">The controller context.</param>
+        /// <param name="aModelBindingContext">The model binding context.</param>
+        /// <returns>The bound value.</returns>
+        /// <exception cref="System.ArgumentNullException">Thrown if the aControllerContext or aModelBindingContext parameter is null.</exception>
         [CanBeNull]
         public override object BindModel([NotNull] ControllerContext aControllerContext, [NotNull] ModelBindingContext aModelBindingContext)
         {

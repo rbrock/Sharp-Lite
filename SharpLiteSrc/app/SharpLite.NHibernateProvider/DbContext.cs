@@ -1,37 +1,63 @@
-﻿using System;
-using NHibernate;
+﻿using NHibernate;
 using SharpLite.Domain.DataInterfaces;
+using SharpLite.NHibernateProvider.Annotations;
+using System;
 
 namespace SharpLite.NHibernateProvider
 {
+    /// <summary>
+    /// Class DbContext.
+    /// </summary>
     public class DbContext : IDbContext
     {
-        public DbContext(ISessionFactory sessionFactory) {
-            if (sessionFactory == null) throw new ArgumentNullException("sessionFactory may not be null");
+        /// <summary>
+        /// The _session factory
+        /// </summary>
+        private readonly ISessionFactory mSessionFactory;
 
-            _sessionFactory = sessionFactory;
-        }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DbContext" /> class.
+        /// </summary>
+        /// <param name="aSessionFactory">The session factory.</param>
+        /// <exception cref="System.ArgumentNullException">Thrown if the aSessionFactory parameter is null.</exception>
+        public DbContext([NotNull] ISessionFactory aSessionFactory)
+        {
+            if (aSessionFactory == null) throw new ArgumentNullException("aSessionFactory");
 
-        public virtual IDisposable BeginTransaction() {
-            return _sessionFactory.GetCurrentSession().BeginTransaction();
+            mSessionFactory = aSessionFactory;
         }
 
         /// <summary>
-        /// This isn't specific to any one DAO and flushes everything that has been
-        /// changed since the last commit.
+        /// Begin a unit of work and return the associated ITransaction object.
         /// </summary>
-        public virtual void CommitChanges() {
-            _sessionFactory.GetCurrentSession().Flush();
+        /// <returns>A transaction instance.</returns>
+        public virtual IDisposable BeginTransaction()
+        {
+            return mSessionFactory.GetCurrentSession().BeginTransaction();
         }
 
-        public virtual void CommitTransaction() {
-            _sessionFactory.GetCurrentSession().Transaction.Commit();
+        /// <summary>
+        /// Synchronize the underlying persistent store with persistable state held in memory.
+        /// </summary>
+        public virtual void CommitChanges()
+        {
+            mSessionFactory.GetCurrentSession().Flush();
         }
 
-        public virtual void RollbackTransaction() {
-            _sessionFactory.GetCurrentSession().Transaction.Rollback();
+        /// <summary>
+        /// Commit the underlying transaction if and only if the transaction was initiated by this object and end the unit of work.
+        /// </summary>
+        public virtual void CommitTransaction()
+        {
+            mSessionFactory.GetCurrentSession().Transaction.Commit();
         }
 
-        private readonly ISessionFactory _sessionFactory;
+        /// <summary>
+        /// Rollbacks the underlying transaction if and only if the transaction was initiated by this object and end the unit of work.
+        /// </summary>
+        public virtual void RollbackTransaction()
+        {
+            mSessionFactory.GetCurrentSession().Transaction.Rollback();
+        }
     }
 }

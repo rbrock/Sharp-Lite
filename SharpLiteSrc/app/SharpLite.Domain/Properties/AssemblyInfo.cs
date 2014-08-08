@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("SharpLite.Domain")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("rbrock")]
+[assembly: AssemblyCompany("Obi-One")]
 [assembly: AssemblyProduct("SharpLite.Domain")]
-[assembly: AssemblyCopyright("Copyright © rbrock 2014")]
+[assembly: AssemblyCopyright("Copyright © Obi-One 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

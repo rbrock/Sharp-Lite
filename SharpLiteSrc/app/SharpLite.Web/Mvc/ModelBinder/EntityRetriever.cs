@@ -2,33 +2,47 @@
 using System.Web.Mvc;
 using SharpLite.Domain.DataInterfaces;
 using System.Reflection;
+using SharpLite.Web.Annotations;
 
 namespace SharpLite.Web.Mvc.ModelBinder
 {
     /// <summary>
-    /// Used to get a data-layer-agnostic handle to a repository; i.e., it doesn't matter if you're
-    /// using NHibernate or something else, you just need to have registered IRepositoryWithTypedId<,>
-    /// with the IoC container
+    /// Class EntityRetriever.
     /// </summary>
-    internal class EntityRetriever
+    internal static class EntityRetriever
     {
-        internal static object GetEntityFor(Type collectionEntityType, object typedId, Type idType) {
-            var entityRepository = CreateEntityRepositoryFor(collectionEntityType, idType);
+        /// <summary>
+        /// Gets the entity for the typed identifier value.
+        /// </summary>
+        /// <param name="aCollectionEntityType">Type of the collection entity.</param>
+        /// <param name="aTypedIdValue">The typed identifier value.</param>
+        /// <param name="aIDType">The identifier type.</param>
+        /// <returns>System.Object.</returns>
+        [NotNull]
+        internal static object GetEntityFor([NotNull] Type aCollectionEntityType, [NotNull] object aTypedIdValue, [NotNull] Type aIDType)
+        {
+            var lEntityRepository = CreateEntityRepositoryFor(aCollectionEntityType, aIDType);
 
-            return entityRepository.GetType().InvokeMember(
-                "Get", BindingFlags.InvokeMethod, null, entityRepository, new[] { typedId });
+            return lEntityRepository.GetType().InvokeMember("Get", BindingFlags.InvokeMethod, null, lEntityRepository, new[] {aTypedIdValue});
         }
 
-        private static object CreateEntityRepositoryFor(Type entityType, Type idType) {
-            Type concreteRepositoryType = typeof(IRepositoryWithTypedId<,>)
-                .MakeGenericType(new[] { entityType, idType });
+        /// <summary>
+        /// Creates the entity repository for the entity.
+        /// </summary>
+        /// <param name="aEntityType">The entity type.</param>
+        /// <param name="aIDType">The identifier type.</param>
+        /// <returns>System.Object.</returns>
+        /// <exception cref="System.TypeLoadException">Thrown if the entity type with identifier type has not been registered with IoC.</exception>
+        [NotNull]
+        private static object CreateEntityRepositoryFor([NotNull] Type aEntityType, [NotNull] Type aIDType)
+        {
+            var lConcreteRepositoryType = typeof (IRepositoryWithTypedId<,>).MakeGenericType(new[] {aEntityType, aIDType});
 
-            object repository = DependencyResolver.Current.GetService(concreteRepositoryType);
+            var lRepository = DependencyResolver.Current.GetService(lConcreteRepositoryType);
 
-            if (repository == null)
-                throw new TypeLoadException(concreteRepositoryType.ToString() + " has not been registered with IoC");
+            if (lRepository == null) throw new TypeLoadException(string.Format("{0} has not been registered with IoC", lConcreteRepositoryType));
 
-            return repository;
+            return lRepository;
         }
     }
 }

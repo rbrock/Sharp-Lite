@@ -1,58 +1,25 @@
 ﻿using System;
-using System.Linq;
 using SharpLite.Domain;
 using SharpLite.Domain.DataInterfaces;
+using SharpLite.EntityFrameworkProvider.Annotations;
 
 namespace SharpLite.EntityFrameworkProvider
 {
-    public class Repository<T> : RepositoryWithTypedId<T, int>, IRepository<T> where T : class, IEntityWithTypedId<int>
+    /// <summary>
+    /// Class Repository.
+    /// </summary>
+    /// <typeparam name="TEntity">The type of the entity.</typeparam>
+    public class Repository<TEntity> : RepositoryWithTypedId<TEntity, int>, IRepository<TEntity> where TEntity : class, IEntityWithTypedId<int>
     {
-        public Repository(System.Data.Entity.DbContext dbContext) : base(dbContext) { }
-    }
-
-    public class RepositoryWithTypedId<T, TId> : IRepositoryWithTypedId<T, TId> where T : class, IEntityWithTypedId<TId>
-    {
-        public RepositoryWithTypedId(System.Data.Entity.DbContext dbContext) {
-            if (dbContext == null) throw new ArgumentNullException("dbContext may not be null");
-
-            _dbContext = dbContext;
-        }
-
-        public virtual IDbContext DbContext {
-            get {
-                return new DbContext(_dbContext);
-            }
-        }
-
-        public virtual T Get(TId id) {
-            return _dbContext.Set<T>().Single(entity => id.Equals(entity.Id));
-        }
-
-        public virtual IQueryable<T> GetAll() {
-            return _dbContext.Set<T>();
-        }
-
-        public virtual T SaveOrUpdate(T entity) {
-            if (entity == null)
-                return null;
-
-            if (entity.IsTransient())
-                _dbContext.Set<T>().Add(entity);
-
-            return entity;
-        }
-
         /// <summary>
-        /// This deletes the object and commits the deletion immediately.  We don't want to delay deletion
-        /// until a transaction commits, as it may throw a foreign key constraint exception which we could
-        /// likely handle and inform the user about.  Accordingly, this tries to delete right away; if there
-        /// is a foreign key constraint preventing the deletion, an exception will be thrown.
+        /// Initializes a new instance of the <see cref="Repository{TEntity}"/> class.
         /// </summary>
-        public virtual void Delete(T entity) {
-            _dbContext.Set<T>().Remove(entity);
-            _dbContext.SaveChanges();
+        /// <param name="aDbContext">The database context.</param>
+        /// <exception cref="System.ArgumentNullException">Thrown if the aDbContext parameter is null.</exception>
+        public Repository([NotNull] System.Data.Entity.DbContext aDbContext)
+            : base(aDbContext)
+        {
+            if (aDbContext == null) throw new ArgumentNullException("aDbContext");
         }
-
-        private readonly System.Data.Entity.DbContext _dbContext;
     }
 }

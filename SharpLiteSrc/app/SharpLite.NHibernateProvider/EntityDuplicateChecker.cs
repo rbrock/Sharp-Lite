@@ -5,97 +5,106 @@ using NHibernate;
 using NHibernate.Criterion;
 using SharpLite.Domain;
 using SharpLite.Domain.DataInterfaces;
+using SharpLite.NHibernateProvider.Annotations;
 
 namespace SharpLite.NHibernateProvider
 {
+    /// <summary>
+    /// Class EntityDuplicateChecker.
+    /// </summary>
     public class EntityDuplicateChecker : IEntityDuplicateChecker
     {
-        public EntityDuplicateChecker(ISessionFactory sessionFactory) {
-            if (sessionFactory == null) throw new ArgumentNullException("sessionFactory may not be null");
+        /// <summary>
+        /// The session factory
+        /// </summary>
+        private readonly ISessionFactory mSessionFactory;
 
-            _sessionFactory = sessionFactory;
+        /// <summary>
+        /// The uninitialized datetime
+        /// </summary>
+        private readonly DateTime mUninitializedDatetime = default(DateTime);
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EntityDuplicateChecker" /> class.
+        /// </summary>
+        /// <param name="aSessionFactory">The session factory.</param>
+        /// <exception cref="System.ArgumentNullException">Thrown if the aSessionFactory parameter is null.</exception>
+        public EntityDuplicateChecker([NotNull] ISessionFactory aSessionFactory)
+        {
+            if (aSessionFactory == null) throw new ArgumentNullException("aSessionFactory");
+
+            mSessionFactory = aSessionFactory;
         }
 
         /// <summary>
-        ///     Provides a behavior specific repository for checking if a duplicate exists of an existing entity.
+        /// Provides a behavior specific repository for checking if a duplicate exists of an existing entity.
         /// </summary>
-        public bool DoesDuplicateExistWithTypedIdOf<TId>(IEntityWithTypedId<TId> entity) {
-            if (entity == null) throw new ArgumentNullException("Entity may not be null when checking for duplicates");
+        /// <typeparam name="TId">The type of the identifier.</typeparam>
+        /// <param name="aEntityWithTypedId">The entity with typed identifier.</param>
+        /// <returns><c>true</c> if exist duplicates, <c>false</c> otherwise.</returns>
+        /// <exception cref="System.ArgumentNullException">Entity may not be null when checking for duplicates</exception>
+        public bool DoesDuplicateExistWithTypedIdOf<TId>(IEntityWithTypedId<TId> aEntityWithTypedId) {
+            if (aEntityWithTypedId == null) throw new ArgumentNullException("aEntityWithTypedId");
 
-            var session = _sessionFactory.GetCurrentSession();
-            var previousFlushMode = session.FlushMode;
+            var lSession = mSessionFactory.GetCurrentSession();
+            var lPreviousFlushMode = lSession.FlushMode;
 
             // We do NOT want this to flush pending changes as checking for a duplicate should 
             // only compare the object against data that's already in the database
-            session.FlushMode = FlushMode.Never;
+            lSession.FlushMode = FlushMode.Never;
 
-            var criteria =
-                session.CreateCriteria(entity.GetType()).Add(Restrictions.Not(Restrictions.Eq("Id", entity.Id))).
-                    SetMaxResults(1);
+            var lCriteria = lSession.CreateCriteria(aEntityWithTypedId.GetType()).Add(Restrictions.Not(Restrictions.Eq("Id", aEntityWithTypedId.Id))).SetMaxResults(1);
 
-            AppendSignaturePropertyCriteriaTo(criteria, entity);
-            var doesDuplicateExist = criteria.List().Count > 0;
-            session.FlushMode = previousFlushMode;
-            return doesDuplicateExist;
+            AppendSignaturePropertyCriteriaTo(lCriteria, aEntityWithTypedId);
+            var lDoesDuplicateExist = (lCriteria.List().Count > 0);
+            lSession.FlushMode = lPreviousFlushMode;
+
+            return lDoesDuplicateExist;
         }
 
-        private static void AppendEntityCriteriaTo<TId>(
-            ICriteria criteria, PropertyInfo signatureProperty, object propertyValue) {
-            criteria.Add(
-                propertyValue != null
-                    ? Restrictions.Eq(signatureProperty.Name + ".Id", ((IEntityWithTypedId<TId>)propertyValue).Id)
-                    : Restrictions.IsNull(signatureProperty.Name + ".Id"));
-        }
+        /// <summary>
+        /// Appends the criteria to signature property.
+        /// </summary>
+        /// <typeparam name="TId">The type of the identifier.</typeparam>
+        /// <param name="aCriteria">The criteria.</param>
+        /// <param name="aEntityWithTypedId">The entity with typed identifier.</param>
+        /// <exception cref="System.ApplicationException">Can't determine how to use  + entity.GetType() + . + signatureProperty.Name +
+        /// when looking for duplicate entries. To remedy this,  +
+        /// you can create a custom validator or report an issue to the S#arp Architecture  +
+        /// project, detailing the type that you'd like to be accommodated.</exception>
+        private void AppendSignaturePropertyCriteriaTo<TId>([NotNull] ICriteria aCriteria, [NotNull] IEntityWithTypedId<TId> aEntityWithTypedId)
+        {
+            foreach (var lSignatureProperty in aEntityWithTypedId.GetSignatureProperties())
+            {
+                var lPropertyType = lSignatureProperty.PropertyType;
+                var lPropertyValue = lSignatureProperty.GetValue(aEntityWithTypedId, null);
 
-        private static void AppendStringPropertyCriteriaTo(
-            ICriteria criteria, PropertyInfo signatureProperty, object propertyValue) {
-            criteria.Add(
-                propertyValue != null
-                    ? Restrictions.InsensitiveLike(signatureProperty.Name, propertyValue.ToString(), MatchMode.Exact)
-                    : Restrictions.IsNull(signatureProperty.Name));
-        }
-
-        private static void AppendValuePropertyCriteriaTo(
-            ICriteria criteria, PropertyInfo signatureProperty, object propertyValue) {
-            criteria.Add(
-                propertyValue != null
-                    ? Restrictions.Eq(signatureProperty.Name, propertyValue)
-                    : Restrictions.IsNull(signatureProperty.Name));
-        }
-
-        private void AppendDateTimePropertyCriteriaTo(
-            ICriteria criteria, PropertyInfo signatureProperty, object propertyValue) {
-            criteria.Add(
-                (DateTime)propertyValue > this.uninitializedDatetime
-                    ? Restrictions.Eq(signatureProperty.Name, propertyValue)
-                    : Restrictions.IsNull(signatureProperty.Name));
-        }
-
-        private void AppendSignaturePropertyCriteriaTo<TId>(ICriteria criteria, IEntityWithTypedId<TId> entity) {
-            foreach (var signatureProperty in entity.GetSignatureProperties()) {
-                var propertyType = signatureProperty.PropertyType;
-                var propertyValue = signatureProperty.GetValue(entity, null);
-
-                if (propertyType.IsEnum) {
-                    criteria.Add(Restrictions.Eq(signatureProperty.Name, (int)propertyValue));
+                if (lPropertyType.IsEnum)
+                {
+                    aCriteria.Add(Restrictions.Eq(lSignatureProperty.Name, (int) lPropertyValue));
                 }
                 else if (
-                    propertyType.GetInterfaces().Any(
-                        x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEntityWithTypedId<>))) {
-                    AppendEntityCriteriaTo<TId>(criteria, signatureProperty, propertyValue);
+                    lPropertyType.GetInterfaces().Any(
+                        aType => aType.IsGenericType && aType.GetGenericTypeDefinition() == typeof (IEntityWithTypedId<>)))
+                {
+                    AppendEntityCriteriaTo<TId>(aCriteria, lSignatureProperty, lPropertyValue);
                 }
-                else if (propertyType == typeof(DateTime)) {
-                    this.AppendDateTimePropertyCriteriaTo(criteria, signatureProperty, propertyValue);
+                else if (lPropertyType == typeof (DateTime))
+                {
+                    AppendDateTimePropertyCriteriaTo(aCriteria, lSignatureProperty, lPropertyValue);
                 }
-                else if (propertyType == typeof(string)) {
-                    AppendStringPropertyCriteriaTo(criteria, signatureProperty, propertyValue);
+                else if (lPropertyType == typeof (string))
+                {
+                    AppendStringPropertyCriteriaTo(aCriteria, lSignatureProperty, lPropertyValue);
                 }
-                else if (propertyType.IsValueType) {
-                    AppendValuePropertyCriteriaTo(criteria, signatureProperty, propertyValue);
+                else if (lPropertyType.IsValueType)
+                {
+                    AppendValuePropertyCriteriaTo(aCriteria, lSignatureProperty, lPropertyValue);
                 }
-                else {
+                else
+                {
                     throw new ApplicationException(
-                        "Can't determine how to use " + entity.GetType() + "." + signatureProperty.Name +
+                        "Can't determine how to use " + aEntityWithTypedId.GetType() + "." + lSignatureProperty.Name +
                         " when looking for duplicate entries. To remedy this, " +
                         "you can create a custom validator or report an issue to the S#arp Architecture " +
                         "project, detailing the type that you'd like to be accommodated.");
@@ -103,7 +112,61 @@ namespace SharpLite.NHibernateProvider
             }
         }
 
-        private readonly ISessionFactory _sessionFactory;
-        private readonly DateTime uninitializedDatetime = default(DateTime);
+        /// <summary>
+        /// Appends the criteria to entity identifier.
+        /// </summary>
+        /// <typeparam name="TId">The type of the identifier.</typeparam>
+        /// <param name="aCriteria">The criteria.</param>
+        /// <param name="aSignatureProperty">The signature property.</param>
+        /// <param name="aPropertyValue">The property value.</param>
+        private static void AppendEntityCriteriaTo<TId>([NotNull] ICriteria aCriteria, [NotNull] PropertyInfo aSignatureProperty, [CanBeNull] object aPropertyValue)
+        {
+            aCriteria.Add(
+                aPropertyValue != null
+                    ? Restrictions.Eq(aSignatureProperty.Name + ".Id", ((IEntityWithTypedId<TId>) aPropertyValue).Id)
+                    : Restrictions.IsNull(aSignatureProperty.Name + ".Id"));
+        }
+
+        /// <summary>
+        /// Appends the criteria to date time property.
+        /// </summary>
+        /// <param name="aCriteria">The criteria.</param>
+        /// <param name="aSignatureProperty">The signature property.</param>
+        /// <param name="aPropertyValue">The property value.</param>
+        private void AppendDateTimePropertyCriteriaTo([NotNull] ICriteria aCriteria, [NotNull] PropertyInfo aSignatureProperty, [NotNull] object aPropertyValue)
+        {
+            aCriteria.Add(
+                (DateTime) aPropertyValue > mUninitializedDatetime
+                    ? Restrictions.Eq(aSignatureProperty.Name, aPropertyValue)
+                    : Restrictions.IsNull(aSignatureProperty.Name));
+        }
+
+        /// <summary>
+        /// Appends the criteria to string property.
+        /// </summary>
+        /// <param name="aCriteria">The criteria.</param>
+        /// <param name="aSignatureProperty">The signature property.</param>
+        /// <param name="aPropertyValue">The property value.</param>
+        private static void AppendStringPropertyCriteriaTo([NotNull] ICriteria aCriteria, [NotNull] PropertyInfo aSignatureProperty, [CanBeNull] object aPropertyValue)
+        {
+            aCriteria.Add(
+                aPropertyValue != null
+                    ? Restrictions.InsensitiveLike(aSignatureProperty.Name, aPropertyValue.ToString(), MatchMode.Exact)
+                    : Restrictions.IsNull(aSignatureProperty.Name));
+        }
+
+        /// <summary>
+        /// Appends the criteria to value property.
+        /// </summary>
+        /// <param name="aCriteria">The criteria.</param>
+        /// <param name="aSignatureProperty">The signature property.</param>
+        /// <param name="aPropertyValue">The property value.</param>
+        private static void AppendValuePropertyCriteriaTo([NotNull] ICriteria aCriteria, [NotNull] PropertyInfo aSignatureProperty, [CanBeNull] object aPropertyValue)
+        {
+            aCriteria.Add(
+                aPropertyValue != null
+                    ? Restrictions.Eq(aSignatureProperty.Name, aPropertyValue)
+                    : Restrictions.IsNull(aSignatureProperty.Name));
+        }
     }
 }
