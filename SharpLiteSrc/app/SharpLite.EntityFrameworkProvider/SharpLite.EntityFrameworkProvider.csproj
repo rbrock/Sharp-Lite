@@ -48,14 +48,6 @@
     <AssemblyOriginatorKeyFile>SharpLite.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -76,13 +68,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="packages.config" />
     <None Include="SharpLite.pfx" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="PostBuildScripts\New-NuGetPackage.ps1" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\entityframework\src\EntityFramework\EntityFramework.csproj">
+      <Project>{e06d1c12-efe8-4413-a15c-ae01fc158f2f}</Project>
+      <Name>EntityFramework</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SharpLite.Domain\SharpLite.Domain.csproj">
       <Project>{6abea9cb-7e93-4ef2-89f0-34ed342cd1eb}</Project>
       <Name>SharpLite.Domain</Name>

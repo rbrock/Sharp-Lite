@@ -39,13 +39,6 @@
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Iesi.Collections">
-      <HintPath>..\..\..\..\..\2Projetos\Luciin\Suite\packages\Iesi.Collections.4.0.1.4000\lib\net40\Iesi.Collections.dll</HintPath>
-    </Reference>
-    <Reference Include="NHibernate, Version=4.0.0.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\2Projetos\Luciin\Suite\packages\NHibernate.4.0.0-CR1\lib\net40\NHibernate.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
@@ -70,13 +63,16 @@
     <Compile Include="Web\SessionPerRequestModule.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
     <None Include="SharpLite.pfx" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="PostBuildScripts\New-NuGetPackage.ps1" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\nhibernate-core\src\NHibernate\NHibernate.csproj">
+      <Project>{5909bfe7-93cf-4e5f-be22-6293368af01d}</Project>
+      <Name>NHibernate</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SharpLite.Domain\SharpLite.Domain.csproj">
       <Project>{6abea9cb-7e93-4ef2-89f0-34ed342cd1eb}</Project>
       <Name>SharpLite.Domain</Name>
