@@ -137,7 +137,7 @@ namespace SharpLite.Domain
         /// </summary>
         /// <param name="aComparableObject">A comparable object.</param>
         /// <returns><c>true</c> if [has same object signature as] [the specified a comparable object]; otherwise, <c>false</c>.</returns>
-        /// <exception cref="System.ArgumentNullException">aComparableObject</exception>
+        /// <exception cref="System.ArgumentNullException">Thrown if the aComparableObject parameter is null.</exception>
         public virtual bool HasSameObjectSignatureAs([NotNull] ComparableObject aComparableObject)
         {
             if (aComparableObject == null) throw new ArgumentNullException("aComparableObject");

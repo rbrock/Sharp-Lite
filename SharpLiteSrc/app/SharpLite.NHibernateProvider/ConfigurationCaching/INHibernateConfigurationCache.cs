@@ -18,7 +18,7 @@ namespace SharpLite.NHibernateProvider.ConfigurationCaching
         /// <param name="aMappingAssemblies">List of assemblies containing HBM files.</param>
         /// <returns>If an up to date cached object is available, a <see cref="Configuration" /> object, otherwise null.</returns>
         [CanBeNull]
-        Configuration LoadConfiguration([NotNull] string aConfigKey, [NotNull] string aConfigPath, [NotNull] IEnumerable<string> aMappingAssemblies);
+        Configuration LoadConfiguration([NotNull] string aConfigKey, [CanBeNull] string aConfigPath, [NotNull] IEnumerable<string> aMappingAssemblies);
 
         /// <summary>
         /// Save the <see cref="Configuration" /> object to a cache.

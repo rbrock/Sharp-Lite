@@ -21,7 +21,7 @@ namespace SharpLite.NHibernateProvider.ConfigurationCaching
         /// List of files that the cached configuration is dependent on.  If any of these
         /// files are newer than the cache file then the cache file could be out of date.
         /// </summary>
-        private readonly List<string> mDependentFilePathList = new List<string>();
+        private readonly List<string> _dependentFilePathList = new List<string>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NHibernateConfigurationFileCache" /> class.
@@ -52,7 +52,7 @@ namespace SharpLite.NHibernateProvider.ConfigurationCaching
         {
             foreach (var lDependentFilePath in aDependentFilePathList)
             {
-                mDependentFilePathList.Add(FindFile(lDependentFilePath));
+                _dependentFilePathList.Add(FindFile(lDependentFilePath));
             }
         }
 
@@ -107,16 +107,18 @@ namespace SharpLite.NHibernateProvider.ConfigurationCaching
         /// object, otherwise null.</returns>
         /// <exception cref="System.ArgumentNullException">Thrown if the aConfigKey or aConfigPath parameter are null or
         /// empty or white space or the aMappingAssemblies parameters is null.</exception>
-        public Configuration LoadConfiguration(string aConfigKey, string aConfigPath, IEnumerable<string> aMappingAssemblies)
+        public Configuration LoadConfiguration([NotNull] string aConfigKey, [CanBeNull] string aConfigPath, [NotNull] IEnumerable<string> aMappingAssemblies)
         {
-            if (string.IsNullOrWhiteSpace(aConfigKey)) throw new ArgumentNullException("aConfigKey");
-            if (string.IsNullOrWhiteSpace(aConfigPath)) throw new ArgumentNullException("aConfigPath");
+            if (aConfigKey == null) throw new ArgumentNullException("aConfigKey");
             if (aMappingAssemblies == null) throw new ArgumentNullException("aMappingAssemblies");
 
             var lCachedConfigPath = CachedConfigPath(aConfigKey);
             AppendToDependentFilePaths(aMappingAssemblies);
 
-            AppendToDependentFilePaths(aConfigPath);
+            if (!string.IsNullOrWhiteSpace(aConfigPath))
+            {
+                AppendToDependentFilePaths(aConfigPath);
+            }
 
             return IsCachedConfigCurrent(lCachedConfigPath) ? FileCache.RetrieveFromCache<Configuration>(lCachedConfigPath) : null;
         }
@@ -142,7 +144,7 @@ namespace SharpLite.NHibernateProvider.ConfigurationCaching
         /// <param name="aPath">File path.</param>
         private void AppendToDependentFilePaths([NotNull] string aPath)
         {
-            mDependentFilePathList.Add(FindFile(aPath));
+            _dependentFilePathList.Add(FindFile(aPath));
         }
 
         /// <summary>
@@ -164,12 +166,12 @@ namespace SharpLite.NHibernateProvider.ConfigurationCaching
         /// <returns>Latest file write time, or '1/1/1980' if list is empty.</returns>
         protected virtual DateTime GetMaxDependencyTime()
         {
-            if ((mDependentFilePathList == null) || (mDependentFilePathList.Count == 0))
+            if ((_dependentFilePathList == null) || (_dependentFilePathList.Count == 0))
             {
                 return DateTime.Parse("1/1/1980");
             }
 
-            return mDependentFilePathList.Max(aPath => File.GetLastWriteTime(aPath));
+            return _dependentFilePathList.Max(aPath => File.GetLastWriteTime(aPath));
         }
 
         /// <summary>
@@ -186,7 +188,7 @@ namespace SharpLite.NHibernateProvider.ConfigurationCaching
         /// </exception>
         public void SaveConfiguration(string aConfigKey, Configuration aConfiguration)
         {
-            if (aConfigKey == null) throw new ArgumentNullException("aConfigKey");
+            if (string.IsNullOrWhiteSpace(aConfigKey)) throw new ArgumentNullException("aConfigKey");
             if (aConfiguration == null) throw new ArgumentNullException("aConfiguration");
 
             var lCachePath = CachedConfigPath(aConfigKey);
