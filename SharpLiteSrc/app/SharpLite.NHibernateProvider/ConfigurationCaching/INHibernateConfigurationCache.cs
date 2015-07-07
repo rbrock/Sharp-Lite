@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
+using JetBrains.Annotations;
 using NHibernate.Cfg;
-using SharpLite.NHibernateProvider.Annotations;
 
 namespace SharpLite.NHibernateProvider.ConfigurationCaching
 {

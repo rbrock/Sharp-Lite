@@ -1,6 +1,6 @@
-﻿using SharpLite.Domain.Annotations;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Reflection;
+using JetBrains.Annotations;
 
 namespace SharpLite.Domain
 {
@@ -9,13 +9,13 @@ namespace SharpLite.Domain
     /// <see cref="Entity" />. Also provides a simple means to develop your own base entity.
     /// </summary>
     /// <typeparam name="TId">The type of the t identifier.</typeparam>
-    public interface IEntityWithTypedId<out TId>
+    public interface IEntityWithTypedId<TId>
     {
         /// <summary>
         /// Gets the identifier.
         /// </summary>
         /// <value>The identifier.</value>
-        TId Id { get; }
+        TId Id { get; set; }
 
         /// <summary>
         /// Gets the signature properties.

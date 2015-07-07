@@ -1,7 +1,7 @@
-﻿using NHibernate;
+﻿using System;
+using JetBrains.Annotations;
+using NHibernate;
 using SharpLite.Domain.DataInterfaces;
-using SharpLite.NHibernateProvider.Annotations;
-using System;
 
 namespace SharpLite.NHibernateProvider
 {

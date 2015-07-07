@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using SharpLite.NHibernateProvider.Annotations;
+using JetBrains.Annotations;
 
 namespace SharpLite.NHibernateProvider.ConfigurationCaching
 {

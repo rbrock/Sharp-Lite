@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using JetBrains.Annotations;
 using NHibernate;
 using NHibernate.Criterion;
 using SharpLite.Domain;
 using SharpLite.Domain.DataInterfaces;
-using SharpLite.NHibernateProvider.Annotations;
 
 namespace SharpLite.NHibernateProvider
 {

@@ -1,11 +1,12 @@
 ﻿using System;
-using System.Web;
-using NHibernate;
 using System.Collections.Generic;
-// This is needed for the DependencyResolver...wish they would've just used Common Service Locator!
-using System.Web.Mvc;
 using System.Linq;
-using SharpLite.NHibernateProvider.Annotations;
+using System.Web;
+using System.Web.Mvc;
+using JetBrains.Annotations;
+using NHibernate;
+
+// This is needed for the DependencyResolver...wish they would've just used Common Service Locator!
 
 namespace SharpLite.NHibernateProvider.Web
 {

@@ -14,8 +14,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{E450F987-D636-40C1-9AF7-8E6AE047D84E}"
 	ProjectSection(SolutionItems) = preProject
 		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B9E27FF6-4556-4FFF-AF4C-7826E7EBCE25}"
@@ -108,3 +106,4 @@ Global
 		SolutionGuid = 9e65e986-86b2-4fbc-bfeb-e35e67389880
 	EndGlobalSection
 EndGlobal
+

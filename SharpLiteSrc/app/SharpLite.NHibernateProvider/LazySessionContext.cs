@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Messaging;
 using System.Web;
+using JetBrains.Annotations;
 using NHibernate;
 using NHibernate.Context;
 using NHibernate.Engine;
-using System.Runtime.Remoting.Messaging;
-using SharpLite.NHibernateProvider.Annotations;
 
 namespace SharpLite.NHibernateProvider
 {

@@ -1,9 +1,10 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using SharpLite.Domain.Annotations;
-using SharpLite.Domain.DataInterfaces;
-// This is needed for the DependencyResolver...wish they would've just used Common Service Locator!
 using System.Web.Mvc;
+using JetBrains.Annotations;
+using SharpLite.Domain.DataInterfaces;
+
+// This is needed for the DependencyResolver...wish they would've just used Common Service Locator!
 
 namespace SharpLite.Domain.Validators
 {

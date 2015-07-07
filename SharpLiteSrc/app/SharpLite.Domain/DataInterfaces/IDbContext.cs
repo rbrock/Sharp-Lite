@@ -1,5 +1,5 @@
-﻿using SharpLite.Domain.Annotations;
-using System;
+﻿using System;
+using JetBrains.Annotations;
 
 namespace SharpLite.Domain.DataInterfaces
 {

@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Web.Mvc;
-using SharpLite.Domain.DataInterfaces;
 using System.Reflection;
-using SharpLite.Web.Annotations;
+using System.Web.Mvc;
+using JetBrains.Annotations;
+using SharpLite.Domain.DataInterfaces;
 
 namespace SharpLite.Web.Mvc.ModelBinder
 {

@@ -1,10 +1,10 @@
-﻿using NHibernate.Cfg;
-using SharpLite.NHibernateProvider.Annotations;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using JetBrains.Annotations;
+using NHibernate.Cfg;
 
 namespace SharpLite.NHibernateProvider.ConfigurationCaching
 {

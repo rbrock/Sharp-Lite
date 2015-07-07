@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
+using JetBrains.Annotations;
 using NHibernate;
 using NHibernate.Linq;
 using SharpLite.Domain.DataInterfaces;
-using SharpLite.NHibernateProvider.Annotations;
 
 namespace SharpLite.NHibernateProvider
 {
@@ -18,6 +18,18 @@ namespace SharpLite.NHibernateProvider
         /// The session factory
         /// </summary>
         private readonly ISessionFactory mSessionFactory;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RepositoryWithTypedId{TEntity, TId}" /> class.
+        /// </summary>
+        /// <param name="aSessionFactory">The session factory.</param>
+        /// <exception cref="System.ArgumentNullException">Thrown if the aSessionFactory parameter is null.</exception>
+        public RepositoryWithTypedId([NotNull] ISessionFactory aSessionFactory)
+        {
+            if (aSessionFactory == null) throw new ArgumentNullException("aSessionFactory");
+
+            mSessionFactory = aSessionFactory;
+        }
 
         /// <summary>
         /// Provides a handle to application wide DB activities such as committing any pending changes,
@@ -39,18 +51,6 @@ namespace SharpLite.NHibernateProvider
             get {
                 return mSessionFactory.GetCurrentSession();
             }
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RepositoryWithTypedId{TEntity, TId}" /> class.
-        /// </summary>
-        /// <param name="aSessionFactory">The session factory.</param>
-        /// <exception cref="System.ArgumentNullException">Thrown if the aSessionFactory parameter is null.</exception>
-        protected RepositoryWithTypedId([NotNull] ISessionFactory aSessionFactory)
-        {
-            if (aSessionFactory == null) throw new ArgumentNullException("aSessionFactory");
-
-            mSessionFactory = aSessionFactory;
         }
 
         /// <summary>

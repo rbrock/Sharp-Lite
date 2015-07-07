@@ -1,4 +1,4 @@
-﻿using SharpLite.Domain.Annotations;
+﻿using JetBrains.Annotations;
 
 namespace SharpLite.Domain.DataInterfaces
 {

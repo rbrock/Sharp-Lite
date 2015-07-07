@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Serialization;
-using SharpLite.Domain.Annotations;
+using JetBrains.Annotations;
 
 namespace SharpLite.Domain
 {
@@ -33,10 +33,11 @@ namespace SharpLite.Domain
         /// It's virtual to allow NHibernate-backed objects to be lazily loaded.
         /// This is ignored for XML serialization because it does not have a public setter (which is very much by design).
         /// See the FAQ within the documentation if you'd like to have the Id XML serialized.
+        /// <remarks>Id was modified to public to apply to SAP Business One ORM, because the mapping was made by ToPersistable()</remarks>
         /// </summary>
         /// <value>The identifier.</value>
         [XmlIgnore]
-        public virtual TId Id { get; protected set; }
+        public virtual TId Id { get; set; }
 
         /// <summary>
         /// Returns a hash code for this instance.
@@ -98,7 +99,7 @@ namespace SharpLite.Domain
         /// <param name="aComparableObject">The <see cref="System.Object" /> to compare with this instance.</param>
         /// <returns><c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.</returns>
         /// <exception cref="System.ArgumentNullException">aComparableObject</exception>
-        public override bool Equals([CanBeNull] object aComparableObject)
+        public override bool Equals(object aComparableObject)
         {
             if (aComparableObject == null) return false;
 

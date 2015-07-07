@@ -1,6 +1,6 @@
-﻿using NHibernate;
+﻿using JetBrains.Annotations;
+using NHibernate;
 using SharpLite.Domain.DataInterfaces;
-using SharpLite.NHibernateProvider.Annotations;
 
 namespace SharpLite.NHibernateProvider
 {

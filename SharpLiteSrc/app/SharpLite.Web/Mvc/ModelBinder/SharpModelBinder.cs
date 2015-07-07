@@ -1,12 +1,12 @@
-﻿using SharpLite.Domain;
-using SharpLite.Web.Annotations;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Web.Mvc;
+using JetBrains.Annotations;
+using SharpLite.Domain;
 
 namespace SharpLite.Web.Mvc.ModelBinder
 {
