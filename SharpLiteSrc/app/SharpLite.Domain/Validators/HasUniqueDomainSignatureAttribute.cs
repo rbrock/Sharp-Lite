@@ -30,7 +30,7 @@ namespace SharpLite.Domain.Validators
 
             var lEntityToValidate = aValue as IEntityWithTypedId<int>;
 
-            if (lEntityToValidate == null) throw new InvalidOperationException(string.Format("This validator must be used at the class level of an IEntityWithTypedId<int>. The type you provided was {0}", aValue.GetType()));
+            if (lEntityToValidate == null) throw new InvalidOperationException($"This validator must be used at the class level of an IEntityWithTypedId<int>. The type you provided was {aValue.GetType()}");
 
             var lDuplicateChecker = DependencyResolver.Current.GetService<IEntityDuplicateChecker>();
 

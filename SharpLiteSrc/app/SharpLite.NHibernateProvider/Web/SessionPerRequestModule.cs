@@ -21,7 +21,7 @@ namespace SharpLite.NHibernateProvider.Web
         /// <param name="aContext">The context.</param>
         /// <exception cref="System.ArgumentNullException">Thrown if the aContext parameter is null.</exception>
         public void Init([NotNull] HttpApplication aContext) {
-            if (aContext == null) throw new ArgumentNullException("aContext");
+            if (aContext == null) throw new ArgumentNullException(nameof(aContext));
 
             aContext.BeginRequest += ContextBeginRequest;
             aContext.EndRequest += ContextEndRequest;

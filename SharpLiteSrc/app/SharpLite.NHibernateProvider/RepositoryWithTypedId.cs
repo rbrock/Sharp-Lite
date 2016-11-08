@@ -26,9 +26,17 @@ namespace SharpLite.NHibernateProvider
         /// <exception cref="System.ArgumentNullException">Thrown if the aSessionFactory parameter is null.</exception>
         public RepositoryWithTypedId([NotNull] ISessionFactory aSessionFactory)
         {
-            if (aSessionFactory == null) throw new ArgumentNullException("aSessionFactory");
+            if (aSessionFactory == null) throw new ArgumentNullException(nameof(aSessionFactory));
 
             mSessionFactory = aSessionFactory;
+        }
+
+        /// <summary>
+        /// Sets the session.
+        /// </summary>
+        /// <param name="aCompanyId">a company identifier.</param>
+        public void SetSession(int aCompanyId){
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -36,22 +44,14 @@ namespace SharpLite.NHibernateProvider
         /// beginning a transaction, rolling back a transaction, etc.
         /// </summary>
         /// <value>The database context.</value>
-        public virtual IDbContext DbContext {
-            get {
-                return new DbContext(mSessionFactory);
-            }
-        }
+        public virtual IDbContext DbContext => new DbContext(mSessionFactory);
 
         /// <summary>
         /// Gets the session.
         /// </summary>
         /// <value>The session.</value>
         [NotNull]
-        protected virtual ISession Session {
-            get {
-                return mSessionFactory.GetCurrentSession();
-            }
-        }
+        protected virtual ISession Session => mSessionFactory.GetCurrentSession();
 
         /// <summary>
         /// This deletes the object and commits the deletion immediately.  We don't want to delay deletion
@@ -63,7 +63,7 @@ namespace SharpLite.NHibernateProvider
         /// <exception cref="System.ArgumentNullException">Thrown if the aEntity parameter is null.</exception>
         public virtual void Delete(TEntity aEntity)
         {
-            if (aEntity == null) throw new ArgumentNullException("aEntity");
+            if (aEntity == null) throw new ArgumentNullException(nameof(aEntity));
 
             Session.Delete(aEntity);
             Session.Flush();
@@ -72,10 +72,10 @@ namespace SharpLite.NHibernateProvider
         /// <summary>
         /// Gets the entity with specified identifier or null if is not found.
         /// </summary>
-        /// <param name="aID">The identifier.</param>
+        /// <param name="aId">The identifier.</param>
         /// <returns>The entity.</returns>
-        public virtual TEntity Get(TId aID) {
-            return Session.Get<TEntity>(aID);
+        public virtual TEntity Get(TId aId) {
+            return Session.Get<TEntity>(aId);
         }
 
         /// <summary>
@@ -92,10 +92,19 @@ namespace SharpLite.NHibernateProvider
         /// <param name="aEntity">The entity to save or update.</param>
         /// <returns>The entity.</returns>
         public virtual TEntity SaveOrUpdate(TEntity aEntity) {
-            if (aEntity == null) throw new ArgumentNullException("aEntity");
+            if (aEntity == null) throw new ArgumentNullException(nameof(aEntity));
 
             Session.SaveOrUpdate(aEntity);
             return aEntity;
+        }
+
+        /// <summary>
+        /// Loads the specified a identifier.
+        /// </summary>
+        /// <param name="aId">a identifier.</param>
+        /// <returns>TEntity.</returns>
+        public TEntity Load(TId aId){
+            return Session.Load<TEntity>(aId);
         }
     }
 }

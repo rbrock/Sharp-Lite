@@ -39,7 +39,7 @@ namespace SharpLite.NHibernateProvider.ConfigurationCaching
         /// <exception cref="System.ArgumentNullException">Thrown if the aDependentFilePathList parameters is null.</exception>
         public NHibernateConfigurationFileCache([NotNull] IEnumerable<string> aDependentFilePathList)
         {
-            if (aDependentFilePathList == null) throw new ArgumentNullException("aDependentFilePathList");
+            if (aDependentFilePathList == null) throw new ArgumentNullException(nameof(aDependentFilePathList));
 
             AppendToDependentFilePaths(aDependentFilePathList);
         }
@@ -109,8 +109,8 @@ namespace SharpLite.NHibernateProvider.ConfigurationCaching
         /// empty or white space or the aMappingAssemblies parameters is null.</exception>
         public Configuration LoadConfiguration([NotNull] string aConfigKey, [CanBeNull] string aConfigPath, [NotNull] IEnumerable<string> aMappingAssemblies)
         {
-            if (aConfigKey == null) throw new ArgumentNullException("aConfigKey");
-            if (aMappingAssemblies == null) throw new ArgumentNullException("aMappingAssemblies");
+            if (aConfigKey == null) throw new ArgumentNullException(nameof(aConfigKey));
+            if (aMappingAssemblies == null) throw new ArgumentNullException(nameof(aMappingAssemblies));
 
             var lCachedConfigPath = CachedConfigPath(aConfigKey);
             AppendToDependentFilePaths(aMappingAssemblies);
@@ -133,7 +133,7 @@ namespace SharpLite.NHibernateProvider.ConfigurationCaching
         [NotNull]
         protected virtual string CachedConfigPath([NotNull] string aConfigKey)
         {
-            var lFileName = string.Format("{0}-{1}.bin", aConfigKey, Assembly.GetCallingAssembly().CodeBase.GetHashCode());
+            var lFileName = $"{aConfigKey}-{Assembly.GetCallingAssembly() .CodeBase.GetHashCode()}.bin";
 
             return Path.Combine(Path.GetTempPath(), lFileName);
         }
@@ -188,8 +188,8 @@ namespace SharpLite.NHibernateProvider.ConfigurationCaching
         /// </exception>
         public void SaveConfiguration(string aConfigKey, Configuration aConfiguration)
         {
-            if (string.IsNullOrWhiteSpace(aConfigKey)) throw new ArgumentNullException("aConfigKey");
-            if (aConfiguration == null) throw new ArgumentNullException("aConfiguration");
+            if (string.IsNullOrWhiteSpace(aConfigKey)) throw new ArgumentNullException(nameof(aConfigKey));
+            if (aConfiguration == null) throw new ArgumentNullException(nameof(aConfiguration));
 
             var lCachePath = CachedConfigPath(aConfigKey);
             FileCache.StoreInCache(aConfiguration, lCachePath);

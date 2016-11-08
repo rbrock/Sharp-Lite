@@ -40,7 +40,7 @@ namespace SharpLite.Web.Mvc.ModelBinder
 
             var lRepository = DependencyResolver.Current.GetService(lConcreteRepositoryType);
 
-            if (lRepository == null) throw new TypeLoadException(string.Format("{0} has not been registered with IoC", lConcreteRepositoryType));
+            if (lRepository == null) throw new TypeLoadException($"{lConcreteRepositoryType} has not been registered with IoC");
 
             return lRepository;
         }

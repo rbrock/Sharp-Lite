@@ -21,8 +21,8 @@ namespace SharpLite.Web.Mvc.ModelBinder
         [CanBeNull]
         public override object BindModel([NotNull] ControllerContext aControllerContext, [NotNull] ModelBindingContext aModelBindingContext)
         {
-            if (aControllerContext == null) throw new ArgumentNullException("aControllerContext");
-            if (aModelBindingContext == null) throw new ArgumentNullException("aModelBindingContext");
+            if (aControllerContext == null) throw new ArgumentNullException(nameof(aControllerContext));
+            if (aModelBindingContext == null) throw new ArgumentNullException(nameof(aModelBindingContext));
 
             var lCollectionType = aModelBindingContext.ModelType;
             var lCollectionEntityType = lCollectionType.GetGenericArguments().First();

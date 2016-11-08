@@ -1,4 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using JetBrains.Annotations;
 
 namespace SharpLite.Domain.DataInterfaces
@@ -11,8 +14,13 @@ namespace SharpLite.Domain.DataInterfaces
     /// </summary>
     /// <typeparam name="TEntity">The type of the entity.</typeparam>
     /// <typeparam name="TId">The type of the identifier.</typeparam>
-    public interface IRepositoryWithTypedId<TEntity, in TId> where TEntity : class
-    {
+    public interface IRepositoryWithTypedId<TEntity, in TId> where TEntity : class{
+        /// <summary>
+        /// Sets the session.
+        /// </summary>
+        /// <param name="aCompanyId">a company identifier.</param>
+        void SetSession(int aCompanyId);
+
         /// <summary>
         /// Provides a handle to application wide DB activities such as committing any pending changes,
         /// beginning a transaction, rolling back a transaction, etc.
@@ -31,10 +39,10 @@ namespace SharpLite.Domain.DataInterfaces
         /// <summary>
         /// Gets the entity with specified identifier or null if is not found.
         /// </summary>
-        /// <param name="aID">The identifier.</param>
+        /// <param name="aId">The identifier.</param>
         /// <returns>The entity.</returns>
-        [NotNull]
-        TEntity Get(TId aID);
+        [CanBeNull]
+        TEntity Get(TId aId);
 
         /// <summary>
         /// Gets the collection of all entities.
@@ -57,5 +65,13 @@ namespace SharpLite.Domain.DataInterfaces
         /// <returns>The entity.</returns>
         [NotNull]
         TEntity SaveOrUpdate([NotNull] TEntity aEntity);
+
+        /// <summary>
+        /// Loads the specified a identifier.
+        /// </summary>
+        /// <param name="aId">a identifier.</param>
+        /// <returns>TEntity.</returns>
+        [NotNull]
+        TEntity Load(TId aId);
     }
 }

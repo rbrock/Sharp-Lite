@@ -56,7 +56,7 @@ namespace SharpLite.NHibernateProvider
         /// <exception cref="System.ArgumentNullException">Thrown if the aSessionFactoryImplementor parameter is null.</exception>
         public LazySessionContext([NotNull] ISessionFactoryImplementor aSessionFactoryImplementor)
         {
-            if (aSessionFactoryImplementor == null) throw new ArgumentNullException("aSessionFactoryImplementor");
+            if (aSessionFactoryImplementor == null) throw new ArgumentNullException(nameof(aSessionFactoryImplementor));
 
             mSessionFactoryImplementor = aSessionFactoryImplementor;
         }
@@ -111,7 +111,7 @@ namespace SharpLite.NHibernateProvider
         [CanBeNull]
         public static ISession UnBind([NotNull] ISessionFactory aSessionFactory)
         {
-            if (aSessionFactory == null) throw new ArgumentNullException("aSessionFactory");
+            if (aSessionFactory == null) throw new ArgumentNullException(nameof(aSessionFactory));
 
             var lMap = GetCurrentFactoryMap();
             var lSessionInitializer = lMap[aSessionFactory];
@@ -128,8 +128,8 @@ namespace SharpLite.NHibernateProvider
         /// <exception cref="System.ArgumentNullException">Thrown if the aSessionInitializer parameter or aSessionFactory parameter is null.</exception>
         public static void Bind([NotNull] Lazy<ISession> aSessionInitializer, [NotNull] ISessionFactory aSessionFactory)
         {
-            if (aSessionInitializer == null) throw new ArgumentNullException("aSessionInitializer");
-            if (aSessionFactory == null) throw new ArgumentNullException("aSessionFactory");
+            if (aSessionInitializer == null) throw new ArgumentNullException(nameof(aSessionInitializer));
+            if (aSessionFactory == null) throw new ArgumentNullException(nameof(aSessionFactory));
 
             var lMap = GetCurrentFactoryMap();
             lMap[aSessionFactory] = aSessionInitializer;

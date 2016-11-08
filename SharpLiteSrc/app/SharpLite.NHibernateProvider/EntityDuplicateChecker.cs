@@ -31,7 +31,7 @@ namespace SharpLite.NHibernateProvider
         /// <exception cref="System.ArgumentNullException">Thrown if the aSessionFactory parameter is null.</exception>
         public EntityDuplicateChecker([NotNull] ISessionFactory aSessionFactory)
         {
-            if (aSessionFactory == null) throw new ArgumentNullException("aSessionFactory");
+            if (aSessionFactory == null) throw new ArgumentNullException(nameof(aSessionFactory));
 
             mSessionFactory = aSessionFactory;
         }
@@ -44,7 +44,7 @@ namespace SharpLite.NHibernateProvider
         /// <returns><c>true</c> if exist duplicates, <c>false</c> otherwise.</returns>
         /// <exception cref="System.ArgumentNullException">Entity may not be null when checking for duplicates</exception>
         public bool DoesDuplicateExistWithTypedIdOf<TId>(IEntityWithTypedId<TId> aEntityWithTypedId) {
-            if (aEntityWithTypedId == null) throw new ArgumentNullException("aEntityWithTypedId");
+            if (aEntityWithTypedId == null) throw new ArgumentNullException(nameof(aEntityWithTypedId));
 
             var lSession = mSessionFactory.GetCurrentSession();
             var lPreviousFlushMode = lSession.FlushMode;

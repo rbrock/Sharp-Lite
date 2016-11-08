@@ -21,7 +21,7 @@ namespace SharpLite.NHibernateProvider.ConfigurationCaching
         [CanBeNull]
         public static T RetrieveFromCache<T>([NotNull] string aPath) where T : class
         {
-            if (string.IsNullOrWhiteSpace(aPath)) throw new ArgumentNullException("aPath");
+            if (string.IsNullOrWhiteSpace(aPath)) throw new ArgumentNullException(nameof(aPath));
 
             try
             {
@@ -47,8 +47,8 @@ namespace SharpLite.NHibernateProvider.ConfigurationCaching
         /// <exception cref="System.ArgumentNullException">Thrown if the aGraph parameters is null or the aPath parameter is null or empty or white space.</exception>
         public static void StoreInCache<T>([NotNull] T aGraph, [NotNull] string aPath) where T : class
         {
-            if (aGraph == null) throw new ArgumentNullException("aGraph");
-            if (string.IsNullOrWhiteSpace(aPath)) throw new ArgumentNullException("aPath");
+            if (aGraph == null) throw new ArgumentNullException(nameof(aGraph));
+            if (string.IsNullOrWhiteSpace(aPath)) throw new ArgumentNullException(nameof(aPath));
 
             using (var lSerializationStream = File.Open(aPath, FileMode.Create))
             {

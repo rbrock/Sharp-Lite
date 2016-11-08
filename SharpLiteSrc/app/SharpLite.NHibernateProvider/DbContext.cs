@@ -22,7 +22,7 @@ namespace SharpLite.NHibernateProvider
         /// <exception cref="System.ArgumentNullException">Thrown if the aSessionFactory parameter is null.</exception>
         public DbContext([NotNull] ISessionFactory aSessionFactory)
         {
-            if (aSessionFactory == null) throw new ArgumentNullException("aSessionFactory");
+            if (aSessionFactory == null) throw new ArgumentNullException(nameof(aSessionFactory));
 
             mSessionFactory = aSessionFactory;
         }

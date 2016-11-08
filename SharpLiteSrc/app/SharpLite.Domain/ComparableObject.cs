@@ -140,7 +140,7 @@ namespace SharpLite.Domain
         /// <exception cref="System.ArgumentNullException">Thrown if the aComparableObject parameter is null.</exception>
         public virtual bool HasSameObjectSignatureAs([NotNull] ComparableObject aComparableObject)
         {
-            if (aComparableObject == null) throw new ArgumentNullException("aComparableObject");
+            if (aComparableObject == null) throw new ArgumentNullException(nameof(aComparableObject));
 
             var lSignatureProperties = GetSignatureProperties().ToList();
 
